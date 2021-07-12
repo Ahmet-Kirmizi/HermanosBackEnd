@@ -18,7 +18,9 @@ app.use(express.json()) // parsing application
 app.use(express.urlencoded({ extended: true }));
 
 const getSignUpDetails = require('../routes/getSignUpDetails')
+const signIn = require('../routes/singIn')
 app.use('/getSignUpDetails', getSignUpDetails)
+app.use('/signIn', signIn)
 
 app.listen(port, () =>{
 console.log("Server is Running")
