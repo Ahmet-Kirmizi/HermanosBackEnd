@@ -29,7 +29,7 @@ router.post('/signUp',body('email').isEmail(),body('password').isLength({min : 8
         user.save().then((doc) => res.status(201).send(doc));
 
     }catch (err){
-        res.status(404).json({message: err.message})
+        return res.status(404).json({message: err.message})
     }
 })
 // getting user for each user
@@ -55,7 +55,7 @@ router.get('/signUp',async (req , res) =>{
                     }
                 })
             }
-            res.status(200).json(response)
+             return res.status(200).json(response)
         })
 
     }
@@ -65,12 +65,12 @@ router.get('/signUp',async (req , res) =>{
     }
 })
 
-router.get('/signUp/:signInid',async (req , res, next) =>{
+router.get('/signUp/:signInid',async (req , res) =>{
     try{
         const id = req.params.signInid;
         userDetails.findById(id).select('_id name surname custdate email password retypepassword telephone').exec().then(docs =>{
                 console.log("from database signUpDetails",docs);
-                res.status(200).json({
+                 return res.status(200).json({
                     user : docs,
                     requests : {
                         type : 'GET',
@@ -82,19 +82,18 @@ router.get('/signUp/:signInid',async (req , res, next) =>{
     }
     catch (err){
         console.log(err)
-        res.status(500).json({message : err.message})
+         return res.status(500).json({message : err.message})
     }
-    next()
 })
 router.delete('/signUp/:signInid', async (req, res , next) =>{
     try {
         const id = req.params.signInid;
         userDetails.findByIdAndDelete(id).exec().then(data =>{
-            res.status(200).json()
+            return res.status(200).json()
         })
     }
     catch (err){
-        res.status(500).json({message : err.message})
+        return res.status(500).json({message : err.message})
     }
 })
 
