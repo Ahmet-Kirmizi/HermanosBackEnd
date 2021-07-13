@@ -9,7 +9,7 @@ const { body, validationResult } = require('express-validator');
 router.post('/signUp',body('email').isEmail(),body('password').isLength({min : 8}).isAlphanumeric(),body('retypepassword').isLength({min : 8}).isAlphanumeric() ,body('telephone').isNumeric(),async (req , res) =>{
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({ errors: errors.array()});
     }
     try {
         // console.log("Body", req.body);
@@ -22,6 +22,7 @@ router.post('/signUp',body('email').isEmail(),body('password').isLength({min : 8
             password : req.body.password,
             retypepassword : req.body.retypepassword,
             telephone : req.body.telephone,
+            address : req.body.address,
         })
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(user.password, salt)
