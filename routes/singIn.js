@@ -4,10 +4,30 @@ const userDetails = require('../models/userDetails')
 const bcrypt = require('bcrypt');
 const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken')
+require('dotenv').config()
 
 
 
-router.post('/', body('email').isEmail(),body('password').isAlphanumeric().isLength({min : 8}),async (req, res) =>{
+const tokenAuth = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    const bearerHeader = authHeader.split(' ')[1];
+    if (authHeader){
+        jwt.verify(bearerHeader, process.env.TOKEN_SECRET, (err, userData) =>{
+            if(err){
+                console.log(err)
+                return res.status(403).json()
+            }
+            req.body.userData = userData;
+            next();
+        });
+
+    }else{
+        res.sendStatus(401);
+    }
+}
+
+
+router.post('/',tokenAuth,body('email').isEmail(),body('password').isAlphanumeric().isLength({min : 8}),async (req, res) =>{
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -17,20 +37,19 @@ router.post('/', body('email').isEmail(),body('password').isAlphanumeric().isLen
             email : req.body.email,
             password : req.body.password,
         })
+        const accessToken = await jwt.sign({userData}, process.env.TOKEN_SECRET, {expiresIn: '100000000000000000000000s'})
 
-        const token = await jwt.sign({userData}, process.env.TOKEN_SECRET, {expiresIn: '30d'})
+        // encrypt password:
         const salt = await bcrypt.genSalt(10);
         userData.password = await bcrypt.hash(userData.password, salt)
+        //
         const doc = await userData.save();
-        //const token = await jwt.sign({userEmail}, process.env.TOKEN_SECRET, {expiresIn: '180s'})
-        return res.status(201).json({doc, token})
+        //const accessToken = await jwt.sign({userEmail}, process.env.TOKEN_SECRET, {expiresIn: '180s'})
+        return res.status(201).json({ accessToken, doc})
     }
     catch (err){
         res.status(400).json({message : err.message})
     }
 })
-
-
-
 
 module.exports = router;
