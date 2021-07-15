@@ -12,12 +12,12 @@ const tokenAuth = (req, res, next) => {
     const authHeader = req.headers.authorization;
     const bearerHeader = authHeader.split(' ')[1];
     if (authHeader){
-        jwt.verify(bearerHeader, process.env.TOKEN_SECRET, (err, userData) =>{
+        jwt.verify(bearerHeader, process.env.TOKEN_SECRET, (err, signInTokenData) =>{
             if(err){
                 console.log(err)
                 return res.status(403).json()
             }
-            req.body.userData = userData;
+            req.body.signInTokenData = signInTokenData;
             next();
         });
 
@@ -26,7 +26,6 @@ const tokenAuth = (req, res, next) => {
     }
 }
 
-
 router.post('/',tokenAuth,body('email').isEmail(),body('password').isAlphanumeric().isLength({min : 8}),async (req, res) =>{
     // validation error:
     const errors = validationResult(req);
@@ -34,20 +33,33 @@ router.post('/',tokenAuth,body('email').isEmail(),body('password').isAlphanumeri
         return res.status(400).json({ errors: errors.array() });
     }
     try{
-        // create mongoose object
-        const userData = await userDetails.create({
-            email : req.body.email,
-            password : req.body.password,
-        })
-        const accessToken = await jwt.sign({userData}, process.env.TOKEN_SECRET, {expiresIn: '100000000000000000000000s'})
+        const userEmail = req.body.email; // get mail from body of the request
+        const userPassword = req.body.password; // get password from the body of the request
+        const salt = await bcrypt.genSalt(10); // generate salt
+        const matchedEmail = await userDetails.findOne({email: userEmail}).select({email:1,password:1}).lean().exec() // gets email and password from db
+        const Emaildb = matchedEmail.email; // mail of the compared object
+        const Passworddb = matchedEmail.password; // password of compared object
+        const userPasswordEncrypt = await bcrypt.hash(userPassword, salt) // encrypted password from request
 
+        // conditionals:
+        const match = await bcrypt.compare(userPassword,userPasswordEncrypt);
+        if (userEmail === Emaildb && match){
+            const signInToken = await jwt.sign({userEmail}, process.env.TOKEN_SECRET, {expiresIn: '180000000000000s'})
+            return res.status(200).json(signInToken);
+
+        }
+        else{
+            return res.sendStatus(403);
+        }
+
+        // loop to get key value pars of object:
+        /*
+        for (const [key, value] of Object.entries(matchedEmail)) {
+            console.log(`${key}: ${value}`);
+        }
+        */
         // encrypt password:
-        const salt = await bcrypt.genSalt(10);
-        userData.password = await bcrypt.hash(userData.password, salt)
 
-        const doc = await userData.save();
-        //const accessToken = await jwt.sign({userEmail}, process.env.TOKEN_SECRET, {expiresIn: '180s'})
-        return res.status(201).json({ accessToken, doc})
     }
     catch (err){
         res.status(400).json({message : err.message})

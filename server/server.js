@@ -6,6 +6,9 @@ const port = 3000; // port to listen
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
 
 mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true ,useUnifiedTopology: true })
 const database = mongoose.connection

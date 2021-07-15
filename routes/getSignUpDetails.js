@@ -4,6 +4,9 @@ const userDetails = require('../models/userDetails')
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose')
 const { body, validationResult } = require('express-validator');
+const jwt = require('jsonwebtoken')
+
+
 
 // creating user for each user
 router.post('/signUp',body('email').isEmail(),body('password').isLength({min : 8}).isAlphanumeric(),body('retypepassword').isLength({min : 8}).isAlphanumeric() ,body('telephone').isNumeric(),async (req , res) =>{
@@ -27,7 +30,8 @@ router.post('/signUp',body('email').isEmail(),body('password').isLength({min : 8
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(user.password, salt)
         user.retypepassword = await bcrypt.hash(user.retypepassword, salt)
-        user.save().then((doc) => res.status(201).send(doc));
+        const token = await jwt.sign({_id:user._id, name:user.name, email:user.email}, process.env.TOKEN_SECRET, {expiresIn: '1000000000000s'})
+        user.save().then((doc) => res.status(201).send({doc, token}));
 
     }catch (err){
         return res.status(404).json({message: err.message})
@@ -86,6 +90,7 @@ router.get('/signUp/:signInid',async (req , res) =>{
          return res.status(500).json({message : err.message})
     }
 })
+/*
 router.delete('/signUp/:signInid', async (req, res , next) =>{
     try {
         const id = req.params.signInid;
@@ -98,5 +103,5 @@ router.delete('/signUp/:signInid', async (req, res , next) =>{
     }
 })
 
-
+*/
 module.exports = router;
