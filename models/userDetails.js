@@ -30,4 +30,4 @@ const signUpSchema = new mongoose.Schema({
     }
 })
 
-module.exports =  mongoose.model('users', signUpSchema);
+module.exports =  mongoose.model('user', signUpSchema,'user');

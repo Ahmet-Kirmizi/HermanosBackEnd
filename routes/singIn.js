@@ -39,6 +39,7 @@ router.post('/',tokenAuth.tokenAuthenticator,body('email').isEmail(),body('passw
     }
     catch (err){
         res.status(400).json({message : err.message})
+        console.log(err)
     }
 })
 

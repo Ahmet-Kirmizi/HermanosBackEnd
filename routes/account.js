@@ -11,7 +11,9 @@ const tokenAuth = require('../middlewares/tokenAuth')
 router.get('/' ,tokenAuth.tokenAuthenticator, async (req,res) =>{
     try {
         const decodedToken = await jwt_decode(req.body.bearerHeader)
-        res.status(403).json({decodedToken})
+        const decodedTokenEmail = await decodedToken.toObject().find({email : req.body.email})
+        console.log(decodedTokenEmail)
+        return res.status(201).json({decodedTokenEmail})
     }catch (err){
         return res.status(403).json({err : err.message})
     }
