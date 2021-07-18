@@ -14,9 +14,10 @@ router.get('/' ,tokenAuth.tokenAuthenticator, async (req,res) =>{
         const decodedTokenValues = Object.values(decodedToken) // getting values
         for(const values of decodedTokenValues){ // looping through array of values
            if(values === req.body.email) { // validating email
-               res.status(201).json({values}) // decoded token email
+               const userData = await userDetails.findOne({email : req.body.email}).select({email:1,name: 1,surname:1,password:1}).lean().exec()
+               console.log(userData)
+               }
            }
-        }
         return res.status(201).json()
     }catch (err){
         return res.status(403).json({err : err.message})
