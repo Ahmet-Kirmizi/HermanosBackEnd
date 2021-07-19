@@ -24,10 +24,12 @@ router.get('/' ,tokenAuth.tokenAuthenticator, async (req,res) =>{ // get route t
 })
 
 // delete method to reset password
+// dont forget to add functionality to only delete password
 router.delete('/:id', async (req, res) =>{
     try{
         const idToDelete = req.params.id
-        const deletedUser = await userDetails.findByIdAndDelete(idToDelete).exec();
+        const deletedUser = await userDetails.findByIdAndDelete(idToDelete).exec().then(succesfull =>{
+            return res.status(200).json()});
         if(!deletedUser){
             res.sendStatus(404);
             return res.send(deletedUser)
