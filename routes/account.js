@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 const jwt_decode = require('jwt-decode');
 require('dotenv').config()
 const tokenAuth = require('../middlewares/tokenAuth')
+const bcrypt = require('bcrypt');
 
 
 
@@ -23,12 +24,11 @@ router.get('/' ,tokenAuth.tokenAuthenticator, async (req,res) =>{ // get route t
     }
 })
 
-// delete method to reset password
-// dont forget to add functionality to only delete password
-router.delete('/:id', async (req, res) =>{
+// delete method to delete user
+router.delete('/delete/:id', async (req, res) =>{
     try{
         const idToDelete = req.params.id
-        const deletedUser = await userDetails.findByIdAndDelete(idToDelete).exec().then(succesfull =>{
+        const deletedUser = await userDetails.findByIdAndDelete(idToDelete).exec().then(successful =>{
             return res.status(200).json()});
         if(!deletedUser){
             res.sendStatus(404);
@@ -36,6 +36,49 @@ router.delete('/:id', async (req, res) =>{
         }
     }catch(err){
         res.status(403).json({message : err.message})
+    }
+})
+// update user details
+router.put('/update/:id', async (req, res) =>{
+    try{
+        const idToUpdate = req.params.id;
+        const updateName = await userDetails.findByIdAndUpdate(idToUpdate, {name: req.body.name}, function(err, result){
+            if(err){
+                return res.status(400).json(err)
+            }
+            else{
+               return res.status(200).json(result)
+            }
+        })
+       const updateSurname = await userDetails.findByIdAndUpdate(idToUpdate, {surname : req.body.surname}, function (err , result){
+           if(err){
+               return res.status(400).json(err)
+           }
+           else{
+               return res.status(200).json(result)
+           }
+       })
+      const updateEmail = await userDetails.findByIdAndUpdate(idToUpdate, {email : req.body.surname}, function (err, result){
+          if(err){
+              return res.status(400).json(err)
+          }
+          else{
+              return res.status(200).json(result)
+          }
+      })
+        const salt = await bcrypt.genSalt(10); // generate salt
+        const password = req.body.password
+        const hashedUpdatePassword = await password.hash(password, salt)
+        const updatePassword = await userDetails.findByIdAndUpdate(idToUpdate, {password : hashedUpdatePassword}, function (err, result){
+            if(err){
+                return res.status(400).json(err)
+            }
+            else{
+                return res.status(200).json(result)
+            }
+        })
+    }catch(err){
+        return res.status(403).json({message : err.message})
     }
 })
 
