@@ -25,7 +25,7 @@ router.get('/' ,tokenAuth.tokenAuthenticator, async (req,res) =>{ // get route t
 })
 
 // delete method to delete user
-router.delete('/delete/:id', async (req, res) =>{
+router.delete('/delete/:id', tokenAuth.tokenAuthenticator,async (req, res) =>{
     try{
         const idToDelete = req.params.id
         const deletedUser = await userDetails.findByIdAndDelete(idToDelete).exec().then(successful =>{
@@ -38,45 +38,42 @@ router.delete('/delete/:id', async (req, res) =>{
         res.status(403).json({message : err.message})
     }
 })
+
 // update user details
-router.put('/update/:id', async (req, res) =>{
+router.put('/updateName/:id', tokenAuth.tokenAuthenticator,async (req, res) =>{
     try{
         const idToUpdate = req.params.id;
-        const updateName = await userDetails.findByIdAndUpdate(idToUpdate, {name: req.body.name}, function(err, result){
-            if(err){
-                return res.status(400).json(err)
-            }
-            else{
-               return res.status(200).json(result)
-            }
-        })
-       const updateSurname = await userDetails.findByIdAndUpdate(idToUpdate, {surname : req.body.surname}, function (err , result){
-           if(err){
-               return res.status(400).json(err)
-           }
-           else{
-               return res.status(200).json(result)
-           }
-       })
-      const updateEmail = await userDetails.findByIdAndUpdate(idToUpdate, {email : req.body.surname}, function (err, result){
-          if(err){
-              return res.status(400).json(err)
-          }
-          else{
-              return res.status(200).json(result)
-          }
-      })
-        const salt = await bcrypt.genSalt(10); // generate salt
-        const password = req.body.password
-        const hashedUpdatePassword = await password.hash(password, salt)
-        const updatePassword = await userDetails.findByIdAndUpdate(idToUpdate, {password : hashedUpdatePassword}, function (err, result){
-            if(err){
-                return res.status(400).json(err)
-            }
-            else{
-                return res.status(200).json(result)
-            }
-        })
+        const updateName = await userDetails.findByIdAndUpdate(idToUpdate, {name: req.body.name})
+        updateName.save().then((changedName) => res.status(201).send({changedName}));
+    }catch(err){
+        return res.status(403).json({message : err.message})
+    }
+});
+
+
+router.put('/updateSurname/:id', tokenAuth.tokenAuthenticator,async(req, res) =>{
+    try{
+        const idToUpdate = req.params.id;
+        const updateSurname = await userDetails.findByIdAndUpdate(idToUpdate, {surname: req.body.surname})
+        updateSurname.save().then((changedSurname) => res.status(201).send({changedSurname}));
+    }catch(err){
+        return res.status(403).json({message : err.message})
+    }
+})
+router.put('/updateEmail/:id', tokenAuth.tokenAuthenticator,async (req, res) =>{
+    try{
+        const idToUpdate = req.params.id;
+        const updateEmail = await userDetails.findByIdAndUpdate(idToUpdate, {email: req.body.email})
+        updateEmail.save().then((changedEmail) => res.status(201).send({changedEmail}));
+    }catch(err){
+        return res.status(403).json({message : err.message})
+    }
+})
+router.put('/updatePassword/:id', tokenAuth.tokenAuthenticator,async (req, res) =>{
+    try{
+        const idToUpdate = req.params.id;
+        const updatePassword = await userDetails.findByIdAndUpdate(idToUpdate, {password: req.body.password})
+        updatePassword.save().then((changedPassword) => res.status(201).send({changedPassword}));
     }catch(err){
         return res.status(403).json({message : err.message})
     }
