@@ -83,5 +83,4 @@ router.put('/updatePassword/:id', tokenAuth.tokenAuthenticator,async (req, res) 
 
 
 
-
 module.exports = router;
