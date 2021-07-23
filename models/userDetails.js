@@ -27,6 +27,21 @@ const signUpSchema = new mongoose.Schema({
     },
     address : {
         type : String
+    },
+    paymentName : {
+        type : String
+    },
+    paymentSurname : {
+        type : String
+    },
+    paymentCardNo : {
+        type  : Number
+    },
+    paymentCCV : {
+        type  : Number
+    },
+    paymentEXP : {
+        type : Date
     }
 })
 
