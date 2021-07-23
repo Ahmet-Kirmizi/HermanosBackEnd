@@ -14,6 +14,8 @@ const signUpSchema = new mongoose.Schema({
     email: {
         type : String,
         unique: true,
+        index:true,
+        sparse:true
     },
     password : {
         type: String,
@@ -40,7 +42,7 @@ const signUpSchema = new mongoose.Schema({
         type  : Number
     },
     paymentEXP : {
-        type : Date,
+        type : String
     }
 })
 
