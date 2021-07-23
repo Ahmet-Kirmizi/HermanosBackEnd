@@ -41,7 +41,6 @@ const signUpSchema = new mongoose.Schema({
     },
     paymentEXP : {
         type : Date,
-        default : Date.now()
     }
 })
 

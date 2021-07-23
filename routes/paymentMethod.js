@@ -27,6 +27,4 @@ router.post('/' , body('paymentName').isString(), body('paymentSurname').isStrin
     }
 })
 
-// loll
-
 module.exports = router;
