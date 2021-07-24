@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 const jwt_decode = require('jwt-decode');
 require('dotenv').config()
 const tokenAuth = require('../middlewares/tokenAuth')
+const passwordAuth = require('../middlewares/verifyPassword')
 const bcrypt = require('bcrypt');
 
 
@@ -71,9 +72,12 @@ router.put('/updateEmail/:id', tokenAuth.tokenAuthenticator,async (req, res) =>{
 })
 router.put('/updatePassword/:id', tokenAuth.tokenAuthenticator,async (req, res) =>{
     try{
-        const idToUpdate = req.params.id;
-        const updatePassword = await userDetails.findByIdAndUpdate(idToUpdate, {password: req.body.password})
-        updatePassword.save().then((changedPassword) => res.status(201).send({changedPassword}));
+        const lookForPassword = await userDetails.findOne({email : req.body.email}).select({email:1}).lean().exec()
+        if(lookForPassword !== null){
+            const idToUpdate = req.params.id;
+            const updatePassword = await userDetails.findByIdAndUpdate(idToUpdate, {password: req.body.password, retypepassword: req.body.password})
+            updatePassword.save().then((changedPassword) => res.status(201).send({changedPassword}));
+    }
     }catch(err){
         return res.status(403).json({message : err.message})
     }
