@@ -75,7 +75,7 @@ router.put('/updatePassword/:id', tokenAuth.tokenAuthenticator,async (req, res) 
         const salt = await bcrypt.genSalt(10);
         req.body.password = await bcrypt.hash(req.body.password, salt)
         req.body.retypepassword = await bcrypt.hash(req.body.retypepassword, salt)
-        if(lookForPassword !== null){
+        if(lookForPassword !== null && req.body.password === req.body.retypepassword){
             const idToUpdate = req.params.id;
             const updatePassword = await userDetails.findByIdAndUpdate(idToUpdate, {password: req.body.password, retypepassword: req.body.retypepassword})
             updatePassword.save().then((changedPassword) => res.status(201).send({changedPassword}));

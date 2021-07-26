@@ -21,7 +21,7 @@ router.post('/' , body('paymentName').isString(), body('paymentSurname').isStrin
            paymentEXP : req.body.paymentEXP
         })
         payment.save().then((details) =>{res.status(201).send({details})})
-    }catch (err){
+    }catch (err){ 
         res.status(403).json({message : err.message})
     }
 })
