@@ -32,5 +32,5 @@ app.use('/getSignUpDetails', getSignUpDetails)
 app.use('/signIn', signIn)
 app.use('/account', account)
 app.listen(port, () => {
-    console.log("Server is Running")
+    console.log("Server is Running " + 'at ' + 'port ' + port)
 })
