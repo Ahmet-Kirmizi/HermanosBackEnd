@@ -12,14 +12,20 @@ const coffees = [
 
 router.get("/search", tokenAuth.tokenAuthenticator, async (req, res) => {
     try {
-        const coffeeName = req.body.name
         const filterByName = await coffees.filter(coffee => coffee.name.includes(req.body.name))
-        const token = req.body.bearerHeader;
-        res.status(201).json({ filterByName , token})
+        res.status(201).json({ filterByName})
     } catch (err) {
         res.status(403).json({ message: err.message });
     }
 });
+router.post('/token', tokenAuth.tokenAuthenticator, async (req, res) =>{
+    try{
+        const token = req.body.bearerHeader;
+        return res.status(201).json({token})
+    }catch(err){
+        return res.status(403).json({message : err.message})
+    }
+})
 router.put('/purchase/:id', tokenAuth.tokenAuthenticator, async (req, res) => {
     try {
         let credit;
