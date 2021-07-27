@@ -14,7 +14,8 @@ router.get("/search", tokenAuth.tokenAuthenticator, async (req, res) => {
     try {
         const coffeeName = req.body.name
         const filterByName = await coffees.filter(coffee => coffee.name.includes(req.body.name))
-        res.status(201).json({ filterByName })
+        const token = req.body.bearerHeader;
+        res.status(201).json({ filterByName , token})
     } catch (err) {
         res.status(403).json({ message: err.message });
     }
@@ -28,7 +29,7 @@ router.put('/purchase/:id', tokenAuth.tokenAuthenticator, async (req, res) => {
         })
 
         const coffeePrice = req.body.coffeePrice
-        if (credit > coffeePrice && credit !== 0) {
+        if ((credit > coffeePrice || credit === coffeePrice) && credit !== 0) {
             const reduceCredit = await userDetails.findByIdAndUpdate(id, { credits: (credit - coffeePrice) })
             reduceCredit.save().then((newCredit) => res.status(201).send({ newCredit }));
         }
