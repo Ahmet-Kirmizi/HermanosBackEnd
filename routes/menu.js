@@ -10,30 +10,35 @@ const coffees = [
     { name: "americano", price: 22, url: "https://scontent.fecn7-1.fna.fbcdn.net/v/t1.6435-9/217392436_101965985505783_3195504378779882822_n.jpg?_nc_cat=109&ccb=1-3&_nc_sid=730e14&_nc_ohc=UxSFPz7zc_AAX_VLWfZ&_nc_ht=scontent.fecn7-1.fna&oh=5c411a2a226aa746c15c09bd44fdfaea&oe=6123E2AA" }
 ]
 
-router.get("/search", tokenAuth.tokenAuthenticator,async (req, res) => {
+router.get("/search", tokenAuth.tokenAuthenticator, async (req, res) => {
     try {
-        const coffeeName =  req.body.name
+        const coffeeName = req.body.name
         const filterByName = await coffees.filter(coffee => coffee.name.includes(req.body.name))
-        res.status(201).json({filterByName})
+        res.status(201).json({ filterByName })
     } catch (err) {
         res.status(403).json({ message: err.message });
     }
 });
-router.put('/purchase/:id', tokenAuth.tokenAuthenticator,async (req, res) =>{
+router.put('/purchase/:id', tokenAuth.tokenAuthenticator, async (req, res) => {
     try {
-        let credi;
+        let credit;
         const id = req.params.id;
-        const creditsdb = await userDetails.findById(id).select({credits: 1}).exec().then(kredi => {
-            credi = kredi.credits;
+        const creditsdb = await userDetails.findById(id).select({ credits: 1 }).exec().then(kredi => {
+            credit = kredi.credits;
         })
-        
-        const creditPrice = req.body.creditPrice
-        const reduceCredit = await userDetails.findByIdAndUpdate(id, {credits : (credi - creditPrice)})
-        reduceCredit.save().then((newCredit) => res.status(201).send({newCredit}));
+
+        const coffeePrice = req.body.coffeePrice
+        if (credit > coffeePrice && credit !== 0) {
+            const reduceCredit = await userDetails.findByIdAndUpdate(id, { credits: (credit - coffeePrice) })
+            reduceCredit.save().then((newCredit) => res.status(201).send({ newCredit }));
+        }
+        else{
+            return res.status(404).json("Yetersiz bakiye")
+        }
 
     }
-    catch (err){
-        return res.status(403).json({message : err.message})
+    catch (err) {
+        return res.status(403).json({ message: err.message })
     }
 })
 
