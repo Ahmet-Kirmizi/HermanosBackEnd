@@ -26,6 +26,7 @@ router.post('/signUp',body('email').isEmail(),body('password').isLength({min : 8
             retypepassword : req.body.retypepassword,
             telephone : req.body.telephone,
             address : req.body.address,
+            credits : 5000,
         })
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(user.password, salt)

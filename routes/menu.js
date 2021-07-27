@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 require("dotenv").config();
 const tokenAuth = require("../middlewares/tokenAuth");
+const userDetails = require('../models/userDetails')
+
 
 const coffees = [
     { name: "latte", price: 20, url: "https://scontent.fecn7-1.fna.fbcdn.net/v/t1.6435-9/216991470_101965968839118_7616420094217531027_n.jpg?_nc_cat=111&ccb=1-3&_nc_sid=730e14&_nc_ohc=grqzla36-HUAX_6bW32&_nc_ht=scontent.fecn7-1.fna&oh=81731d67ffdbbd2ec6a64dbef7d7fb08&oe=6125B079" },
@@ -17,5 +19,23 @@ router.get("/search", tokenAuth.tokenAuthenticator,async (req, res) => {
         res.status(403).json({ message: err.message });
     }
 });
+router.put('/purchase/:id', tokenAuth.tokenAuthenticator,async (req, res) =>{
+    try {
+        let credi;
+        const id = req.params.id;
+        const creditsdb = await userDetails.findById(id).select({credits: 1}).exec().then(kredi => {
+            credi = kredi.credits;
+        })
+        
+        const creditPrice = req.body.creditPrice
+        const reduceCredit = await userDetails.findByIdAndUpdate(id, {credits : (credi - creditPrice)})
+        reduceCredit.save().then((newCredit) => res.status(201).send({newCredit}));
+
+    }
+    catch (err){
+        return res.status(403).json({message : err.message})
+    }
+})
+
 
 module.exports = router;

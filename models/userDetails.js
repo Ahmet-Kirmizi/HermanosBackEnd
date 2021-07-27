@@ -43,7 +43,10 @@ const signUpSchema = new mongoose.Schema({
     },
     paymentEXP : {
         type : String
-    }
+    },
+    credits : {
+        type: Number,
+    },
 })
 
 module.exports =  mongoose.model('user', signUpSchema,'user');
