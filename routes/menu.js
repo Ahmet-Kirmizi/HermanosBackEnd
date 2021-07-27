@@ -25,7 +25,8 @@ router.post('/token', tokenAuth.tokenAuthenticator, async (req, res) =>{
     }catch(err){
         return res.status(403).json({message : err.message})
     }
-})
+});
+
 router.put('/purchase/:id', tokenAuth.tokenAuthenticator, async (req, res) => {
     try {
         let credit;
