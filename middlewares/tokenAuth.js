@@ -6,22 +6,22 @@ require('dotenv').config()
 const tokenAuth = (req, res, next) => {
     const authHeader = req.headers.authorization;
     const bearerHeader = authHeader.split(' ')[1];
-    if (authHeader){
-        jwt.verify(bearerHeader, process.env.TOKEN_SECRET, (err, signInTokenData) =>{
-            if(err){
+    if (authHeader) {
+        jwt.verify(bearerHeader, process.env.TOKEN_SECRET, (err, signInTokenData) => {
+            if (err) {
                 console.log(err)
                 return res.status(403).json()
             }
-                req.body.bearerHeader = bearerHeader;
-                req.body.signInTokenData = signInTokenData;
+            req.body.bearerHeader = bearerHeader;
+            req.body.signInTokenData = signInTokenData;
             next();
         });
 
-    }else{
+    } else {
         return res.sendStatus(401);
-                
+
     }
 }
 
 
-module.exports = {tokenAuthenticator : tokenAuth}
+module.exports = { tokenAuthenticator: tokenAuth }

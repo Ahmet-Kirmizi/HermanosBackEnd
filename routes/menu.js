@@ -13,27 +13,27 @@ const coffees = [
 router.get("/search", tokenAuth.tokenAuthenticator, async (req, res) => {
     try {
         const filterByName = await coffees.filter(coffee => coffee.name.includes(req.body.name))
-        res.status(201).json({ filterByName})
+        res.status(201).json({ filterByName })
     } catch (err) {
         res.status(403).json({ message: err.message });
     }
 });
 
 // get token
-router.get('/token', sendToken.token,tokenAuth.tokenAuthenticator,  async (req, res) =>{
-    try{
+router.get('/token', sendToken.token, tokenAuth.tokenAuthenticator, async (req, res) => {
+    try {
         const token = req.body.bearerHeader;
-        return res.status(201).json({token})
-    }catch(err){
-        return res.status(403).json({message : err.message})
+        return res.status(201).json({ token })
+    } catch (err) {
+        return res.status(403).json({ message: err.message })
     }
 });
 // get menu details
-router.get('/', async (req, res) =>{
-    try{
-        res.send({coffees})
-    }catch(err){
-        return res.status(403).json({message : err.message})
+router.get('/', async (req, res) => {
+    try {
+        res.send({ coffees })
+    } catch (err) {
+        return res.status(403).json({ message: err.message })
     }
 })
 
@@ -52,7 +52,7 @@ router.put('/purchase/:id', tokenAuth.tokenAuthenticator, async (req, res) => {
             const reduceCredit = await userDetails.findByIdAndUpdate(id, { credits: (credit - coffeePrice) })
             reduceCredit.save().then((newCredit) => res.status(201).send({ newCredit }));
         }
-        else{
+        else {
             return res.status(404).json("Yetersiz bakiye")
         }
 
