@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const mongoose = require('mongoose')
 const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken')
+const sendToken = require('../middlewares/sendToken')
 
 
 
@@ -35,11 +36,12 @@ router.post('/signUp',body('email').isEmail(),body('password').isLength({min : 8
         user.save().then((doc) => res.status(201).send({doc, token}));
 
     }catch (err){
-        return res.status(404).json({message: err.message})
+        return res.status(401).json({message: err.message})
+        console.log({err});
     }
 })
 // getting user for each user
-router.get('/signUp',async (req , res) =>{
+router.get('/signUp',sendToken.token ,async (req , res) =>{
     try{
             await userDetails.find().select('_id name surname custdate email password retypepassword telephone').exec().then(documents =>{
             const  response = {

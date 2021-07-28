@@ -3,7 +3,7 @@ const router = express.Router();
 require("dotenv").config();
 const tokenAuth = require("../middlewares/tokenAuth");
 const userDetails = require('../models/userDetails')
-
+const sendToken = require('../middlewares/sendToken')
 
 const coffees = [
     { name: "latte", price: 20, url: "https://scontent.fecn7-1.fna.fbcdn.net/v/t1.6435-9/216991470_101965968839118_7616420094217531027_n.jpg?_nc_cat=111&ccb=1-3&_nc_sid=730e14&_nc_ohc=grqzla36-HUAX_6bW32&_nc_ht=scontent.fecn7-1.fna&oh=81731d67ffdbbd2ec6a64dbef7d7fb08&oe=6125B079" },
@@ -18,7 +18,7 @@ router.get("/search", tokenAuth.tokenAuthenticator, async (req, res) => {
         res.status(403).json({ message: err.message });
     }
 });
-router.post('/token', tokenAuth.tokenAuthenticator, async (req, res) =>{
+router.get('/token', sendToken.token,tokenAuth.tokenAuthenticator,  async (req, res) =>{
     try{
         const token = req.body.bearerHeader;
         return res.status(201).json({token})

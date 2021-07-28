@@ -21,7 +21,7 @@ app.use(express.json()) // parsing application
 app.use(express.urlencoded({ extended: true }));
 
 const getSignUpDetails = require('../routes/getSignUpDetails')
-const signIn = require('../routes/singIn')
+const signIn = require('../routes/signIn')
 const account = require('../routes/account')
 const paymentMethod = require('../routes/paymentMethod')
 const menu = require('../routes/menu')

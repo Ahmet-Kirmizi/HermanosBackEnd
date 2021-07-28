@@ -9,12 +9,8 @@ require('dotenv').config()
 
 
 
-router.post('/',tokenAuth.tokenAuthenticator,body('email').isEmail(),body('password').isAlphanumeric().isLength({min : 8}),async (req, res) =>{
+router.post('/',async (req, res) =>{
     // validation error:
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
     try{
         const userEmail = req.body.email; // get mail from body of the request
         const userPassword = req.body.password; // get password from the body of the request
@@ -28,7 +24,7 @@ router.post('/',tokenAuth.tokenAuthenticator,body('email').isEmail(),body('passw
         const match = await bcrypt.compare(userPassword,userPasswordEncrypt);
         if (userEmail === Emaildb && match){
             const signInToken = await jwt.sign({userEmail}, process.env.TOKEN_SECRET, {expiresIn: '180000000000000s'})
-            return res.status(200).json(signInToken);
+           res.send({signInToken})
 
         }
         else{
