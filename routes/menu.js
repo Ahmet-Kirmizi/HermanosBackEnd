@@ -23,7 +23,7 @@ router.get("/search", tokenAuth.tokenAuthenticator, async (req, res) => {
 router.get('/token', sendToken.token, tokenAuth.tokenAuthenticator, async (req, res) => {
     try {
         const token = req.body.bearerHeader;
-        return res.status(201).json({ token })
+        return res.status(200).json({ token })
     } catch (err) {
         return res.status(403).json({ message: err.message })
     }
@@ -31,7 +31,7 @@ router.get('/token', sendToken.token, tokenAuth.tokenAuthenticator, async (req, 
 // get menu details
 router.get('/', async (req, res) => {
     try {
-        res.send({ coffees })
+        res.status(200).send({ coffees })
     } catch (err) {
         return res.status(403).json({ message: err.message })
     }
