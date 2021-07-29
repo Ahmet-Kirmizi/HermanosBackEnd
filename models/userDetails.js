@@ -47,6 +47,18 @@ const signUpSchema = new mongoose.Schema({
     credits : {
         type: Number,
     },
+    coffeeName : {
+        type : String,
+    },
+    coffeePrice : {
+        type : Number
+    },
+    customerName : {
+        type: String,
+    },
+    customerSurname : {
+        type : String,
+    },
 })
 
 module.exports =  mongoose.model('user', signUpSchema,'user');

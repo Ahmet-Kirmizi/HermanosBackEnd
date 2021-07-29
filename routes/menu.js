@@ -39,17 +39,18 @@ router.get('/', async (req, res) => {
 
 
 // buy
-router.put('/purchase/:id', tokenAuth.tokenAuthenticator, async (req, res) => {
+router.put('/purchase/credit/:id', tokenAuth.tokenAuthenticator, async (req, res) => {
     try {
         let credit;
         const id = req.params.id;
-        const creditsdb = await userDetails.findById(id).select({ credits: 1 }).exec().then(kredi => {
-            credit = kredi.credits;
+        const creditsdb = await userDetails.findById(id).select({ credits: 1 }).exec().then(cred => {
+            credit = cred.credits;
         })
 
         const coffeePrice = req.body.coffeePrice
         if ((credit > coffeePrice || credit === coffeePrice) && credit !== 0) {
             const reduceCredit = await userDetails.findByIdAndUpdate(id, { credits: (credit - coffeePrice) })
+            console.log(reduceCredit);
             reduceCredit.save().then((newCredit) => res.status(201).send({ newCredit }));
         }
         else {
@@ -59,6 +60,31 @@ router.put('/purchase/:id', tokenAuth.tokenAuthenticator, async (req, res) => {
     }
     catch (err) {
         return res.status(403).json({ message: err.message })
+    }
+});
+
+// save bought product to db 
+router.post('/purchase/products/:id', tokenAuth.tokenAuthenticator, async (req, res) => {
+    try {
+        let customerName;
+        let customerSurname;
+        const id = req.params.id;
+        const customersdb = await userDetails.findOne({_id : req.params.id}, (err, result) =>{
+            customerName = result.name;
+            customerSurname = result.surname;
+        })
+        const coffeeName = req.body.coffeeName;
+        const coffeePrice = req.body.coffeePrice;
+        console.log(customerName, customerSurname)
+        const customerOrder = await userDetails.create({
+            customerName : customerName,
+            customerSurname : customerSurname,
+            coffeeName  : coffeeName,
+            coffeePrice : coffeePrice
+        })
+        customerOrder.save().then((productDetails) => res.status(201).send({ productDetails }));
+    } catch (err) {
+        return res.status(403).json({message : err.message})
     }
 })
 
