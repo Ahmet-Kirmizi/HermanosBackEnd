@@ -6,8 +6,14 @@ const userDetails = require('../models/userDetails')
 const sendToken = require('../middlewares/sendToken')
 
 const coffees = [
-    { name: "latte", price: 20, url: "https://scontent.fecn7-1.fna.fbcdn.net/v/t1.6435-9/216991470_101965968839118_7616420094217531027_n.jpg?_nc_cat=111&ccb=1-3&_nc_sid=730e14&_nc_ohc=grqzla36-HUAX_6bW32&_nc_ht=scontent.fecn7-1.fna&oh=81731d67ffdbbd2ec6a64dbef7d7fb08&oe=6125B079" },
-    { name: "americano", price: 22, url: "https://scontent.fecn7-1.fna.fbcdn.net/v/t1.6435-9/217392436_101965985505783_3195504378779882822_n.jpg?_nc_cat=109&ccb=1-3&_nc_sid=730e14&_nc_ohc=UxSFPz7zc_AAX_VLWfZ&_nc_ht=scontent.fecn7-1.fna&oh=5c411a2a226aa746c15c09bd44fdfaea&oe=6123E2AA" }
+    { name: "latte", price: "20 TL", url: "https://scontent.fecn7-1.fna.fbcdn.net/v/t1.6435-9/216991470_101965968839118_7616420094217531027_n.jpg?_nc_cat=111&ccb=1-3&_nc_sid=730e14&_nc_ohc=grqzla36-HUAX_6bW32&_nc_ht=scontent.fecn7-1.fna&oh=81731d67ffdbbd2ec6a64dbef7d7fb08&oe=6125B079" },
+    { name: "americano", price: "22 TL", url: "https://scontent.fecn7-1.fna.fbcdn.net/v/t1.6435-9/217392436_101965985505783_3195504378779882822_n.jpg?_nc_cat=109&ccb=1-3&_nc_sid=730e14&_nc_ohc=UxSFPz7zc_AAX_VLWfZ&_nc_ht=scontent.fecn7-1.fna&oh=5c411a2a226aa746c15c09bd44fdfaea&oe=6123E2AA" },
+    { name: "frappe", price: "20 TL", url: "https://scontent.fecn7-1.fna.fbcdn.net/v/t1.6435-9/216991470_101965968839118_7616420094217531027_n.jpg?_nc_cat=111&ccb=1-3&_nc_sid=730e14&_nc_ohc=grqzla36-HUAX_6bW32&_nc_ht=scontent.fecn7-1.fna&oh=81731d67ffdbbd2ec6a64dbef7d7fb08&oe=6125B079" },
+    { name: "espresso", price: "22 TL", url: "https://scontent.fecn7-1.fna.fbcdn.net/v/t1.6435-9/217392436_101965985505783_3195504378779882822_n.jpg?_nc_cat=109&ccb=1-3&_nc_sid=730e14&_nc_ohc=UxSFPz7zc_AAX_VLWfZ&_nc_ht=scontent.fecn7-1.fna&oh=5c411a2a226aa746c15c09bd44fdfaea&oe=6123E2AA" },
+    { name: "mocha", price: "20 TL", url: "https://scontent.fecn7-1.fna.fbcdn.net/v/t1.6435-9/216991470_101965968839118_7616420094217531027_n.jpg?_nc_cat=111&ccb=1-3&_nc_sid=730e14&_nc_ohc=grqzla36-HUAX_6bW32&_nc_ht=scontent.fecn7-1.fna&oh=81731d67ffdbbd2ec6a64dbef7d7fb08&oe=6125B079" },
+    { name: "caramel latte", price: "22 TL", url: "https://scontent.fecn7-1.fna.fbcdn.net/v/t1.6435-9/217392436_101965985505783_3195504378779882822_n.jpg?_nc_cat=109&ccb=1-3&_nc_sid=730e14&_nc_ohc=UxSFPz7zc_AAX_VLWfZ&_nc_ht=scontent.fecn7-1.fna&oh=5c411a2a226aa746c15c09bd44fdfaea&oe=6123E2AA" },
+    { name: "caramel frappe", price: "20 TL", url: "https://scontent.fecn7-1.fna.fbcdn.net/v/t1.6435-9/216991470_101965968839118_7616420094217531027_n.jpg?_nc_cat=111&ccb=1-3&_nc_sid=730e14&_nc_ohc=grqzla36-HUAX_6bW32&_nc_ht=scontent.fecn7-1.fna&oh=81731d67ffdbbd2ec6a64dbef7d7fb08&oe=6125B079" },
+    { name: "americano", price: "22 TL", url: "https://scontent.fecn7-1.fna.fbcdn.net/v/t1.6435-9/217392436_101965985505783_3195504378779882822_n.jpg?_nc_cat=109&ccb=1-3&_nc_sid=730e14&_nc_ohc=UxSFPz7zc_AAX_VLWfZ&_nc_ht=scontent.fecn7-1.fna&oh=5c411a2a226aa746c15c09bd44fdfaea&oe=6123E2AA" },
 ]
 // search
 router.get("/search", tokenAuth.tokenAuthenticator, async (req, res) => {
@@ -69,7 +75,7 @@ router.post('/purchase/products/:id', tokenAuth.tokenAuthenticator, async (req, 
         let customerName;
         let customerSurname;
         const id = req.params.id;
-        const customersdb = await userDetails.findOne({_id : req.params.id}, (err, result) =>{
+        const customersdb = await userDetails.findOne({ _id: req.params.id }, (err, result) => {
             customerName = result.name;
             customerSurname = result.surname;
         })
@@ -77,14 +83,14 @@ router.post('/purchase/products/:id', tokenAuth.tokenAuthenticator, async (req, 
         const coffeePrice = req.body.coffeePrice;
         console.log(customerName, customerSurname)
         const customerOrder = await userDetails.create({
-            customerName : customerName,
-            customerSurname : customerSurname,
-            coffeeName  : coffeeName,
-            coffeePrice : coffeePrice
+            customerName: customerName,
+            customerSurname: customerSurname,
+            coffeeName: coffeeName,
+            coffeePrice: coffeePrice
         })
         customerOrder.save().then((productDetails) => res.status(201).send({ productDetails }));
     } catch (err) {
-        return res.status(403).json({message : err.message})
+        return res.status(403).json({ message: err.message })
     }
 })
 
