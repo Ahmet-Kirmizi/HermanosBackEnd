@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 const port = 3000; // port to listen
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); 
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);

@@ -16,7 +16,7 @@ const coffees = [
     { name: "americano", price: "22 TL", url: "https://scontent.fecn7-1.fna.fbcdn.net/v/t1.6435-9/217392436_101965985505783_3195504378779882822_n.jpg?_nc_cat=109&ccb=1-3&_nc_sid=730e14&_nc_ohc=UxSFPz7zc_AAX_VLWfZ&_nc_ht=scontent.fecn7-1.fna&oh=5c411a2a226aa746c15c09bd44fdfaea&oe=6123E2AA" },
 ]
 // search
-router.get("/search", tokenAuth.tokenAuthenticator, async (req, res) => {
+router.post("/search", async (req, res) => {
     try {
         const filterByName = await coffees.filter(coffee => coffee.name.includes(req.body.name))
         res.status(201).json({ filterByName })
