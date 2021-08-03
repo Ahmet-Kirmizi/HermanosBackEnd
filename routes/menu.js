@@ -37,7 +37,9 @@ router.get('/token', sendToken.token, tokenAuth.tokenAuthenticator, async (req, 
 // get menu details
 router.get('/', async (req, res) => {
     try {
-        res.status(200).send({ coffees })
+        const query_value = req.query.name;
+        const filteredQuery = coffees.filter(coffee => coffee.name.includes(query_value))
+        res.status(200).send({ coffees, filteredQuery})
     } catch (err) {
         return res.status(403).json({ message: err.message })
     }

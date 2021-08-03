@@ -26,7 +26,10 @@ const signIn = require('../routes/signIn')
 const account = require('../routes/account')
 const paymentMethod = require('../routes/paymentMethod')
 const menu = require('../routes/menu')
+const sendCardData = require('../routes/sendCardData')
 
+
+app.use('/sendCardData', sendCardData)
 app.use('/menu', menu)
 app.use('/paymentMethod', paymentMethod)
 app.use('/getSignUpDetails', getSignUpDetails)
