@@ -1,2 +1,1 @@
-# REST API for Cafe Hermanos
-# NodeJs, Expressjs, Mongoose used
+# REST API Built for Cafe Hermanos Web App
